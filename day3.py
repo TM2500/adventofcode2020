@@ -19,7 +19,19 @@ def traverse(grid_data, mv):
             count += 1
     return count
 
+def run_pt2(data):
+    slopes = ((3,1),(1,1),(5,1),(7,1),(1,2))
+
+    pt2 = 1
+    for s in slopes:
+        pt2 = pt2 * traverse(data,s)
+    return pt2
+
+def run_pt1(data):
+    return traverse(data, (3,1))
+
 if __name__ == '__main__':
+    print(' BEGIN TEST '.center(80,'-'))
     test = [
         '..##.......',
         '#...#...#..',
@@ -33,29 +45,13 @@ if __name__ == '__main__':
         '#...##....#',
         '.#..#...#.#'
         ]
-    print(' BEGIN TEST '.center(80,'-'))
-    t11 = traverse(test,(3,1))
-    t21 = traverse(test,(1,1))
-    t22 = t11
-    t23 = traverse(test,(5,1))
-    t24 = traverse(test,(7,1))
-    t25 = traverse(test,(1,2))
-
-    print('Part one', t11)
-    tp2 = t21 * t22 * t23 * t24 * t25
-    print('Part two', tp2)
+    print('Part one', run_pt1(test))
+    print('Part two', run_pt2(test))
     print(' END TEST '.center(80,'-'))
 
     print(' BEGIN REAL '.center(80,'-'))
     with open('day3_input', 'r') as f:
         grid = list(f)
-        c11 = traverse(grid, (3,1))
-        c21 = traverse(grid,(1,1))
-        c22 = c11
-        c23 = traverse(grid,(5,1))
-        c24 = traverse(grid,(7,1))
-        c25 = traverse(grid,(1,2))
-        print('Part one', c11)
-        cp2 = c21 * c22 * c23 * c24 * c25
-        print('Part two', cp2)
+        print('Part one', run_pt1(grid))
+        print('Part two', run_pt2(grid))
     print(' END REAL '.center(80,'-'))
