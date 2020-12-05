@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+import re
+"""
 def get_col(line):
     colT = line[7:]
     col = range(8)
@@ -28,11 +30,18 @@ def proc_line(line):
     col = get_col(line)
     seat_id = gen_id(row, col)
     return seat_id
+"""
+def bsp_to_id(bsp):
+    hi = re.compile('B|R')
+    lo = re.compile('F|L')
+    binrep = hi.sub('1',bsp)
+    binrep = lo.sub('0',binrep)
+    return int(binrep, 2)
 
 def run_pt2(data):
     ids = []
     for line in data:
-        ids.append(proc_line(line))
+        ids.append(bsp_to_id(line))
     for i in range(min(ids), max(ids)):
         if i not in ids:
             return i
@@ -40,7 +49,7 @@ def run_pt2(data):
 def run_pt1(data):
     ids = []
     for line in data:
-        ids.append(proc_line(line))
+        ids.append(bsp_to_id(line))
     return max(ids)
 
 if __name__ == '__main__':
