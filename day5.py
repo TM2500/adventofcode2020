@@ -34,9 +34,7 @@ def proc_line(line):
 def bsp_to_id(bsp):
     hi = re.compile('B|R')
     lo = re.compile('F|L')
-    binrep = hi.sub('1',bsp)
-    binrep = lo.sub('0',binrep)
-    return int(binrep, 2)
+    return int(lo.sub('0', hi.sub('1',bsp)), 2)
 
 def run_pt2(data):
     ids = []
