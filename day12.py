@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 
 import re
+from math import cos, sin
+from math import radians as rad
 
 def cruise(instructions, origin):
     def forward(bear):
@@ -27,32 +29,22 @@ def cruise(instructions, origin):
     return x, y, bear
 
 def wp(instructions, origin):
-    def cw(arg, x, y):
-        if arg == 90:
-            return y, -x
-        if arg == 180:
-            return -x, -y
-        if arg == 270:
-            return -y, x
-    def ccw(arg, x, y):
-        if arg == 90:
-            return -y, x
-        if arg == 180:
-            return -x, -y
-        if arg == 270:
-            return y, -x
-    ops = { 'N': lambda arg: ((x, y+arg), sx, sy),
-            'E': lambda arg: ((x+arg, y), sx, sy),
-            'S': lambda arg: ((x, y-arg), sx, sy),
-            'W': lambda arg: ((x-arg, y), sx, sy),
-            'R': lambda arg: (cw(arg, x, y), sx, sy),
-            'L': lambda arg: (ccw(arg, x, y), sx, sy),
-            'F': lambda arg: ((x, y), sx+x*arg, sy+y*arg),
+    ops = { 'N': lambda arg: (x, y+arg, sx, sy),
+            'E': lambda arg: (x+arg, y, sx, sy),
+            'S': lambda arg: (x, y-arg, sx, sy),
+            'W': lambda arg: (x-arg, y, sx, sy),
+            'R': lambda arg: (round(x*cos(rad(-arg)) - y*sin(rad(-arg))),
+                              round(x*sin(rad(-arg)) + y*cos(rad(-arg))),
+                              sx, sy),
+            'L': lambda arg: (round(x*cos(rad(arg)) - y*sin(rad(arg))),
+                              round(x*sin(rad(arg)) + y*cos(rad(arg))),
+                              sx, sy),
+            'F': lambda arg: (x, y, sx+x*arg, sy+y*arg),
            }
 
     (x, y, sx, sy) = origin
     for inst in instructions:
-        (x, y), sx, sy = ops[inst[0]](int(inst[1]))
+        x, y, sx, sy = ops[inst[0]](int(inst[1]))
     return sx, sy
 
 def manhattan_dist(x, y):
