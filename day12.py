@@ -5,22 +5,13 @@ from math import cos, sin
 from math import radians as rad
 
 def cruise(instructions, origin):
-    def forward(bear):
-        if bear == 0:
-            return 'N'
-        if bear == 90:
-            return 'E'
-        if bear == 180:
-            return 'S'
-        if bear == 270:
-            return 'W'
     ops = { 'N': lambda arg: (x, y+arg, bear),
             'E': lambda arg: (x+arg, y, bear),
             'S': lambda arg: (x, y-arg, bear),
             'W': lambda arg: (x-arg, y, bear),
             'R': lambda arg: (x, y, (bear+arg)%360),
             'L': lambda arg: (x, y, (bear-arg)%360),
-            'F': lambda arg: (ops[forward(bear)](arg)),
+            'F': lambda arg: (ops[('N', 'E', 'S', 'W')[(bear // 90)%4]](arg)),
            }
 
     (x, y, bear) = origin
@@ -28,7 +19,7 @@ def cruise(instructions, origin):
         x, y, bear = ops[inst[0]](int(inst[1]))
     return x, y, bear
 
-def wp(instructions, origin):
+def nav(instructions, origin):
     ops = { 'N': lambda arg: (x, y+arg, sx, sy),
             'E': lambda arg: (x+arg, y, sx, sy),
             'S': lambda arg: (x, y-arg, sx, sy),
@@ -50,18 +41,20 @@ def wp(instructions, origin):
 def manhattan_dist(x, y):
     return abs(x) + abs(y)
 
-def run_pt1(data):
+def parse_inst(data):
     p = re.compile(r'^([nsewlrf])(\d+)$', re.I)
-    instructions = [ p.findall(line)[0] for line in data]
+    return [ p.findall(line)[0] for line in data]
+
+def run_pt1(data):
+    inst = parse_inst(data)
     orig = (0, 0, 90) # looking east
-    x, y, bear = cruise(instructions, orig)
+    x, y, bear = cruise(inst, orig)
     return manhattan_dist(x, y)
 
 def run_pt2(data):
-    p = re.compile(r'^([nsewlrf])(\d+)$', re.I)
-    instructions = [ p.findall(line)[0] for line in data]
+    inst = parse_inst(data)
     orig = (10, 1, 0, 0) # 10 east, 1 north
-    x, y = wp(instructions, orig)
+    x, y = nav(inst, orig)
     return manhattan_dist(x, y)
 
 if __name__ == '__main__':
